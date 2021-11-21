@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="DRDDefineResponsible2ndLevelGroup" name="DRD DefineResponsible2ndLevelGroup" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="4.10.0">
+  <decision id="DefineResponsible2ndLevelGroup" name="Zuständigen 2nd Level Support bestimmen">
+    <informationRequirement id="InformationRequirement_1qtkdqa">
+      <requiredInput href="#priority" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_1rhy4nz">
+      <requiredInput href="#category" />
+    </informationRequirement>
+    <decisionTable id="DecisionTable_1u2oj2w">
+      <input id="Input_1" label="Priorität">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text>priority</text>
+        </inputExpression>
+        <inputValues id="UnaryTests_01nq1ql">
+          <text>"low","middle","high"</text>
+        </inputValues>
+      </input>
+      <input id="InputClause_14yopt5" label="Kategorie">
+        <inputExpression id="LiteralExpression_19xw1fj" typeRef="string">
+          <text>category</text>
+        </inputExpression>
+        <inputValues id="UnaryTests_1w7pz4d">
+          <text></text>
+        </inputValues>
+      </input>
+      <output id="Output_1" label="Zuständige Gruppe" name="responsible_group" typeRef="string" />
+      <rule id="DecisionRule_0lsqndt">
+        <description>Alle High-Prio-Incidents gehen an super-senior-cracks</description>
+        <inputEntry id="UnaryTests_0p4kizf">
+          <text>"high"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06cggav">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_07qzypq">
+          <text>"super-senior-cracks"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0dp1sre">
+        <description>Low- und Middle Hardware-Störungen gehen an hardware-team</description>
+        <inputEntry id="UnaryTests_0zgxx42">
+          <text>not("high")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0zryqb9">
+          <text>starts with(?, "hw")</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0lcbdbi">
+          <text>"hardware-team"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1nnrg3z">
+        <description>Low- und Middle Betriebssystem-Störungen gehen an os-team</description>
+        <inputEntry id="UnaryTests_1rf7k7q">
+          <text>not("high")</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1vjjtu1">
+          <text>"sw.os"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1qlgx42">
+          <text>"os-team"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0toqoe1">
+        <description>Middle Office 365-Störungen gehen an office-2nd-team</description>
+        <inputEntry id="UnaryTests_173r0lu">
+          <text>"middle"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_153hyba">
+          <text>"sw.office"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0r3yp5l">
+          <text>"office-2nd-team"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_12s6qgk">
+        <description>Low Office 365-Störungen gehen an office-1st-team</description>
+        <inputEntry id="UnaryTests_1451or8">
+          <text>"low"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1m04qx4">
+          <text>"sw.office"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0i0u976">
+          <text>"office-1st-team"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0zj49jo">
+        <description>Low- und Middle übrige Software-Störungen gehen an beissen-die-hunde-team</description>
+        <inputEntry id="UnaryTests_1nlov8o">
+          <text>"low","middle"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1un3fjb">
+          <text>"sw.other"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0vtwtov">
+          <text>"beissen-die-hunde-team"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData id="priority" name="Priorität" />
+  <inputData id="category" name="Kategorie" />
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="DefineResponsible2ndLevelGroup">
+        <dc:Bounds height="80" width="180" x="210" y="100" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_1x8nbsh" dmnElementRef="priority">
+        <dc:Bounds height="45" width="125" x="147" y="248" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_1ljiym2" dmnElementRef="category">
+        <dc:Bounds height="45" width="125" x="327" y="248" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_0g52141" dmnElementRef="InformationRequirement_1qtkdqa">
+        <di:waypoint x="210" y="248" />
+        <di:waypoint x="270" y="200" />
+        <di:waypoint x="270" y="180" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_19xp0zw" dmnElementRef="InformationRequirement_1rhy4nz">
+        <di:waypoint x="390" y="248" />
+        <di:waypoint x="330" y="200" />
+        <di:waypoint x="330" y="180" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
