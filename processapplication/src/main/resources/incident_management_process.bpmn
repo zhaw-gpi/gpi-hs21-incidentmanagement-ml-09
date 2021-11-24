@@ -53,8 +53,8 @@
         <bpmn:flowNodeRef>BenutzerUberEskalationInformierenTask</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Zustandigen2ndLevelSupportBestimmenTask</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>RfCErstellenTask</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>UberRfCErstellungInformierenTask</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>UberAkzeptierteLosungInformierenTask</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>UberRfCErstellungInformierenTask</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="PPServiceDeskLane" name="Service Desk (1st Level)">
         <bpmn:flowNodeRef>StorungKategorisierenPriorisierenUndDiagnostizierenTask</bpmn:flowNodeRef>
@@ -452,43 +452,6 @@ In der Realität könnte der POST-Request aus den verschiedensten Gründen fehls
       <bpmn:incoming>JaSequenceFlow1</bpmn:incoming>
       <bpmn:outgoing>Flow_1whffa6</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="UberRfCErstellungInformierenTask" name="Über RfC-Erstellung informieren" camunda:type="external" camunda:topic="IncidentManagementNotification">
-      <bpmn:documentation>Anforderungen
-============
-Der Benutzer und Service Desk wird über den jeweils gewünschten Kanal (WhatsApp, Push-Notification, SMS, E-Mail) über den erstellten RfC benachrichtigt.
-
-Die lokale Variable notification_content hat also einen Inhalt in der folgenden Art: "Die Störung 'TITLE (BUSINESSKEY)' wurde zu einem RfC eskaliert mit den folgenden Informationen:
-
-- Titel: RFC_TITLE
-- Beschreibung: RFC_DESCRIPTION
-- Begründung: RFC_REASONS
-
-Daher wird die Störung geschlossen. Eventuell hilft Ihnen auch die Beschreibung der vorübergehenden (Workaround)-Lösung: SOLUTION_DESCRIPTION"
-
-Die lokale Variable notification_recipients ist eine Liste mit zwei Einträgen:
-- Eintrag bestehend aus der Prozessvariable initiating_user
-- "servicedesk"
-
-
-Weitere Hinweise
-=============
-Diese Anforderung soll nicht in der Prozessapplikation selbst realisiert werden, sondern über einen entsprechend gestalteten Microservice, der als External Task Client auf Aufgaben des Topics IncidentManagementNotification abonniert.
-
-Statt statisch eine Notification an servicedesk zu senden, würde diese stattdessen eher dynamisch an die Person des Service Desks gesendet, welche das Ticket zuletzt bearbeitete.</bpmn:documentation>
-      <bpmn:extensionElements>
-        <camunda:inputOutput>
-          <camunda:inputParameter name="notification_recipients">
-            <camunda:list>
-              <camunda:value>servicedesk</camunda:value>
-              <camunda:value>${initiating_user}</camunda:value>
-            </camunda:list>
-          </camunda:inputParameter>
-          <camunda:inputParameter name="notification_content">testrfc</camunda:inputParameter>
-        </camunda:inputOutput>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_126o88o</bpmn:incoming>
-      <bpmn:outgoing>Flow_1en3knz</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:sendTask id="UberAkzeptierteLosungInformierenTask" name="Über akzeptierte Lösung informieren" camunda:type="external" camunda:topic="IncidentManagementNotification">
       <bpmn:documentation>Anforderungen
 ============
@@ -522,6 +485,43 @@ Statt statisch eine Notification an servicedesk zu senden, würde diese stattdes
       </bpmn:extensionElements>
       <bpmn:incoming>JaSequenceFlow2</bpmn:incoming>
       <bpmn:outgoing>Flow_0cgu3rb</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sendTask id="UberRfCErstellungInformierenTask" name="Über RfC-Erstellung informieren" camunda:type="external" camunda:topic="IncidentManagementNotification">
+      <bpmn:documentation>Anforderungen
+============
+Der Benutzer und Service Desk wird über den jeweils gewünschten Kanal (WhatsApp, Push-Notification, SMS, E-Mail) über den erstellten RfC benachrichtigt.
+
+Die lokale Variable notification_content hat also einen Inhalt in der folgenden Art: "Die Störung 'TITLE (BUSINESSKEY)' wurde zu einem RfC eskaliert mit den folgenden Informationen:
+
+- Titel: RFC_TITLE
+- Beschreibung: RFC_DESCRIPTION
+- Begründung: RFC_REASONS
+
+Daher wird die Störung geschlossen. Eventuell hilft Ihnen auch die Beschreibung der vorübergehenden (Workaround)-Lösung: SOLUTION_DESCRIPTION"
+
+Die lokale Variable notification_recipients ist eine Liste mit zwei Einträgen:
+- Eintrag bestehend aus der Prozessvariable initiating_user
+- "servicedesk"
+
+
+Weitere Hinweise
+=============
+Diese Anforderung soll nicht in der Prozessapplikation selbst realisiert werden, sondern über einen entsprechend gestalteten Microservice, der als External Task Client auf Aufgaben des Topics IncidentManagementNotification abonniert.
+
+Statt statisch eine Notification an servicedesk zu senden, würde diese stattdessen eher dynamisch an die Person des Service Desks gesendet, welche das Ticket zuletzt bearbeitete.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="notification_recipients">
+            <camunda:list>
+              <camunda:value>servicedesk</camunda:value>
+              <camunda:value>${initiating_user}</camunda:value>
+            </camunda:list>
+          </camunda:inputParameter>
+          <camunda:inputParameter name="notification_content">${'Die Lösung zum Incident mit dem Business Key '.concat(execution.getProcessBusinessKey()).concat(' wurde als RfC eskaliert.')}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_126o88o</bpmn:incoming>
+      <bpmn:outgoing>Flow_1en3knz</bpmn:outgoing>
     </bpmn:sendTask>
   </bpmn:process>
   <bpmn:message id="Message_0im14jd" name="Message_Incident_From_Event" />
@@ -1027,11 +1027,11 @@ Statt statisch eine Notification an servicedesk zu senden, würde diese stattdes
       <bpmndi:BPMNShape id="Gateway_0yifn3j_di" bpmnElement="Gateway_0yifn3j" isMarkerVisible="true">
         <dc:Bounds x="1815" y="1380" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1jse3li_di" bpmnElement="UberRfCErstellungInformierenTask">
-        <dc:Bounds x="1930" y="1725" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0uoapop_di" bpmnElement="UberAkzeptierteLosungInformierenTask">
         <dc:Bounds x="2180" y="1625" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1b7ziaa_di" bpmnElement="UberRfCErstellungInformierenTask">
+        <dc:Bounds x="1930" y="1725" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Participant_0gzj01f_di" bpmnElement="ServiceDesk1stLevelParticipant" isHorizontal="true" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
         <dc:Bounds x="610" y="2050" width="1140" height="380" />
