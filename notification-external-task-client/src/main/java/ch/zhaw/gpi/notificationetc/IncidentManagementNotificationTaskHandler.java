@@ -42,12 +42,12 @@ public class IncidentManagementNotificationTaskHandler implements ExternalTaskHa
 
         Mail mail = new Mail();
         mail.setTemplateId(sendGridTemplateId);
-        mail.setSubject("Incident " + et.getBusinessKey());
         Email from = new Email(fromMailAddress);
         mail.setFrom(from);
 
         Personalization personalization = new Personalization();
-        personalization.addDynamicTemplateData("content", content);
+        personalization.addDynamicTemplateData("content", content);        
+        personalization.addDynamicTemplateData("subject", "Incident " + et.getBusinessKey());
         recipients.forEach(recipient -> {
             if (recipient != null) {
                 String mailAddress = repository.findById(recipient).get().getMailAddress();
