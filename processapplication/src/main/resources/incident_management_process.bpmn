@@ -517,7 +517,7 @@ Statt statisch eine Notification an servicedesk zu senden, würde diese stattdes
               <camunda:value>${initiating_user}</camunda:value>
             </camunda:list>
           </camunda:inputParameter>
-          <camunda:inputParameter name="notification_content">${'Die Lösung zum Incident mit dem Business Key '.concat(execution.getProcessBusinessKey()).concat(' wurde als RfC eskaliert.')}</camunda:inputParameter>
+          <camunda:inputParameter name="notification_content">${'Die Lösung zum Incident mit dem Business Key '.concat(execution.getProcessBusinessKey()).concat(' wurde als RfC akzeptiert.')}</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_126o88o</bpmn:incoming>
@@ -1643,7 +1643,7 @@ Statt statisch eine Notification an servicedesk zu senden, würde diese stattdes
         <di:waypoint x="2280" y="1520" />
         <di:waypoint x="1670" y="1520" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2185" y="1250" width="90" height="27" />
+          <dc:Bounds x="2175" y="1256" width="90" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_15tpvy6_di" bpmnElement="FeedbackZuNichtAkzeptierterLosungMessageFlow1" bioc:stroke="#fb8c00" color:border-color="#fb8c00">
